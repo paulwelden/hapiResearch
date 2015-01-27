@@ -13,6 +13,7 @@ server.connection({ port: 3000 });
 
 //configure api routes
 TicketRoutes.Configure(server);
+TicketRoutes.SeedDB();
 
 server.start(function (){
    console.log('Server running at:', server.info.uri);

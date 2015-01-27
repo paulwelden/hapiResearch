@@ -4,13 +4,16 @@
 var Ticket = require('../models/ticket.js'),
     Joi = require('joi');
 
+Joi.objectId = require('joi-objectid'); //extend Joi for simplicity;
+
 
 
 function Configure(hapiServer) {
+    var pathRoot = '/ticket';
 
     hapiServer.route({
         method: 'GET',
-        path: '/',
+        path: pathRoot,
         handler: function (request, reply) {
             Ticket.find().exec(function (arr, data) {
              reply(data);
@@ -21,17 +24,49 @@ function Configure(hapiServer) {
 
     hapiServer.route({
         method: 'GET',
-        path: '/{id}',
+        path: pathRoot + '/{id}',
         handler: function (request, reply) {
-            reply('Your Guid: ' + encodeURIComponent(request.params.name) + '!');
+            Ticket.findById(request.params.id, function (err, data) {
+                if(err || !data){
+                    reply('Ticket not found.').code(404);
+                }
+                else
+                {
+                    reply(data);
+                }
+            });
+
         },
         config: {
             validate: {
                 params: {
-                    id: Joi.string().guid()
+                    id: Joi.objectId()
                 }
             }
         }
+    });
+
+
+
+}
+
+function SeedDB(){
+    Ticket.remove().exec();
+
+    var initialTicket = new Ticket(
+        {
+            title: 'first ticket',
+            desc: 'this is my first ticket',
+            body: 'yo dawg'
+        }
+    );
+
+    initialTicket.save(function (err) {
+        if (err) // ...
+            console.log('ticket seeding has failed');
+        else
+            console.log('seeding is now complete');
+
     });
 }
 
@@ -39,6 +74,7 @@ function Configure(hapiServer) {
 
 module.exports = {
 
-    Configure : Configure
+    Configure : Configure,
+    SeedDB : SeedDB
 
 };
