@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/paulwelden/hapiResearch",
   "dependencies": {
-    "hapi": "^8.1.0"
+    "hapi": "^8.1.0",
+    "joi": "^5.1.0",
+    "mongoose": "^3.8.22"
   }
 }
